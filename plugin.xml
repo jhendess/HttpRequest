@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+xmlns:android="http://schemas.android.com/apk/res/android"
+id="org.github.bperin.http"
+    version="0.0.1">
+
+    <name>HttpRequest</name>
+    <description>Cordova Android Native HTTP Request</description>
+    <license>MIT</license>
+    <keywords>cordova,net,http,https</keywords>
+    <repo>https://github.com/dmihalcik/HttpRequest</repo>
+
+    <js-module src="www/httpRequest.js" name="MediaError">
+        <clobbers target="window.plugins.HttpRequest" />
+    </js-module>
+    
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="HttpRequest" >
+                <param name="android-package" value="org.github.bperin.http.HttpRequestPlugin"/>
+            </feature>
+        </config-file>
+        
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+        
+        <source-file src="src/android/HttpRequestPlugin.java" target-dir="src/org/github/bperin/http" />
+        <source-file src="src/android/HttpRequest.java" target-dir="src/com/github/kevinsawicki/http" />
+     </platform>
+</plugin>

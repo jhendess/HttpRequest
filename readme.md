@@ -1,72 +1,58 @@
-# HTTP request plugin for Phonegap / Cordova #
+# HTTP request plugin for Phonegap / Cordova
 
-This plugin allows you to send native HTTP requests great for API's. This plugin can force HTTPS requests
+This plugin allows you to send native HTTP requests. Great for web APIs. This plugin can force HTTPS requests.
 
-## Adding the Plugin to your project ##
+## Adding the Plugin to your project
 
-Using this plugin requires [Android PhoneGap](http://github.com/phonegap/phonegap-android).
-Based off of HTTP-Request library [http-request](https://github.com/kevinsawicki/http-request)
+Using this plugin requires [Android Cordova](http://cordova.apache.org) or PhoneGap.
 
-1. Include JS in your assets folder after cordova
+Based off of HTTP-Request library [http-request](https://github.com/kevinsawicki/http-request) and directly from [bperin/HttpRequest](https://github.com/bperin/HttpRequest).
 
-    &lt;script type="text/javascript" charset="utf-8" src="httpRequest.js"&gt;&lt;/script&gt;
 
-2. Add HttpRequestPlugin and HttpRequest java classes to your project
-
-3. Add the plugin to your cordova config.xml
-
-```xml
-    <plugins>
-        <plugin
-            name="HttpRequest"
-            value="com.phonegap.plugins.http.HttpRequestPlugin" />
-     </plugins>
-```
-
-## Using the plugin ##
+## Using the plugin
 
 Plugin supports GET and POST methods
-<br/>
-There are two main options to set, trustAll which makes the request trust all SSL certs and Gzip to accept gzip requests
-<br/>
-If the response request code == 200 the win callback function is triggered otherwise it will fail
 
-##Example##
+There are two main options to set, trustAll which makes the request trust all SSL certs and Gzip to accept gzip requests.
+
+If the response request code == 200 the win callback function is triggered otherwise it will fail.
+
+
+### Example
 Query facebook for posts with 'phonegap'
 
-<pre>
-    var httpOptions = {
-            trustAll: true
-        };
-        var params = {
-            q: 'phonegap',
-            type: 'post'// note this is a GET request post refers to the facebook wall posts
-        };
+```java
+var httpOptions = {
+        trustAll: true
+    };
+    var params = {
+        q: 'phonegap',
+        type: 'post'// note this is a GET request post refers to the facebook wall posts
+    };
 
-        var apiUrl = 'https://graph.facebook.com/search?';
+    var apiUrl = 'https://graph.facebook.com/search?';
 
-        window.plugins.HttpRequest.execute(apiUrl,'get',params, httpOptions,
-                function(response) {
+    window.plugins.HttpRequest.execute(apiUrl,'get',params, httpOptions,
+            function(response) {
 
-                    var code = response.code;
-                    var message = response.message;
-                    var body = response.body;
-                    
-                    alert(JSON.stringify(body));
-                    
-                    return;
-                },
-                function(response) {
-              
-                    var code = response.code;
-                    var message = response.message;
-                    var body = response.body;
+                var code = response.code;
+                var message = response.message;
+                var body = response.body;
+                
+                alert(JSON.stringify(body));
+                
+                return;
+            },
+            function(response) {
+          
+                var code = response.code;
+                var message = response.message;
+                var body = response.body;
 
-                    alert('Request : ' + message + ' code ' + code);
-                });
-
+                alert('Request : ' + message + ' code ' + code);
+            });
         
-</pre>
+```
 
 ## RELEASE NOTES ##
 
