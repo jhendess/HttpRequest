@@ -11,8 +11,8 @@ id="org.github.bperin.http"
     <keywords>cordova,net,http,https</keywords>
     <repo>https://github.com/dmihalcik/HttpRequest</repo>
 
-    <js-module src="www/httpRequest.js" name="MediaError">
-        <clobbers target="window.plugins.HttpRequest" />
+    <js-module src="www/httpRequest.js" name="HttpRequest">
+        <clobbers target="HttpRequest" />
     </js-module>
     
     <!-- android -->

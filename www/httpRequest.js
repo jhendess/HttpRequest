@@ -1,13 +1,11 @@
-var HttpRequest = function() {
+/*global require, module*/
+var exec = require('cordova/exec');
+
+function HttpRequest() {
+}
+
+HttpRequest.prototype.execute = function (url, method, params, options, win, fail) {
+    return exec(win, fail, 'HttpRequest', 'execute', [url, method, params, options]);
 };
 
-HttpRequest.prototype.execute = function(url, method, params, options, win, fail) {
-    return Cordova.exec(win, fail, 'HttpRequest', 'execute', [url, method, params,options]);
-};
-
-if (!window.plugins) {
-    window.plugins = {};
-}
-if (!window.plugins.HttpRequest) {
-    window.plugins.HttpRequest = new HttpRequest();
-}
+module.exports = new HttpRequest();

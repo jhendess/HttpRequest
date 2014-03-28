@@ -1,19 +1,6 @@
 package org.github.bperin.http;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaPlugin;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.util.Log;
-
-import com.github.kevinsawicki.http.HttpRequest;
-import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 
 public class HttpRequestPlugin extends CordovaPlugin {
 
@@ -22,10 +9,8 @@ public class HttpRequestPlugin extends CordovaPlugin {
 	// private HttpRequest request;
 
 	@Override
-	public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) {
-
+    public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		if (action.equals("execute")) {
-
 			cordova.getThreadPool().execute(new Runnable() {
 
 				public void run() {
@@ -34,13 +19,14 @@ public class HttpRequestPlugin extends CordovaPlugin {
 						HttpRequest request;
 
 						String url = args.getString(0);
-						String method = args.getString(1);
+						String method = (args.length() < 2 || args.isNull(1)) ? "get" : args.getString(1);
 
-						JSONObject params = args.getJSONObject(2);
-						JSONObject options = args.getJSONObject(3);
+						JSONObject params = (args.length() < 3 || args.isNull(2)) ? new JSONObject() : args.getJSONObject(2);
+						JSONObject options = (args.length() < 4 || args.isNull(3)) ? new JSONObject() : args.getJSONObject(3);
 
 						// optional params
-						boolean trust = options.getBoolean("trustAll");
+						boolean trust = options.has("trustAll") ? options.getBoolean("trustAll") : false;
+						JSONObject headers = options.has("headers") ? options.getJSONObject("headers") : null;
 						
 
 						// iterate over the supplied params, depending on
@@ -49,30 +35,43 @@ public class HttpRequestPlugin extends CordovaPlugin {
 
 						Map<String, String> inputParams = new HashMap<String, String>();
 
-						@SuppressWarnings("unchecked")
-						Iterator<String> keys = params.keys();
-
-						while (keys.hasNext()) {
-
-							// get the key and corresponding value
-							String keyName = (String) keys.next();
-							String keyValue = params.getString(keyName);
-
-							inputParams.put(keyName, keyValue);
-
+						if (null != params) {
+							@SuppressWarnings("unchecked")
+							Iterator<String> keys = params.keys();
+							while (keys.hasNext()) {
+	
+								// get the key and corresponding value
+								String keyName = (String) keys.next();
+								String keyValue = params.getString(keyName);
+	
+								inputParams.put(keyName, keyValue);
+							}
 						}
 
 						if (method.equalsIgnoreCase("post")) {
 							request = HttpRequest.post(url);
-							request.form(inputParams);
-						}
-						else {
+						} else {
 							request = HttpRequest.get(url, inputParams, true);
+						}
+						
+						if (null != headers) {
+							@SuppressWarnings("unchecked")
+							Iterator<String> keys = headers.keys();
+							while (keys.hasNext()) {
+								// get the key and corresponding value
+								String keyName = keys.next();
+								request.header(keyName, params.getString(keyName));
+								//request.header("Referer", "http://www.cdc.gov/mobile/Applications/sto/feedback/feedbackGeneric.html");
+							}
 						}
 
 						if (trust == true) {
 							request.trustAllCerts();
 							request.trustAllHosts();
+						}
+
+						if (method.equalsIgnoreCase("post")) {
+							request.form(inputParams);
 						}
 
 						int code = request.code();
