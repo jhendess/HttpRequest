@@ -73,7 +73,7 @@ public class HttpRequestPlugin extends CordovaPlugin {
 							while (keys.hasNext()) {
 								// get the key and corresponding value
 								String keyName = keys.next();
-								request.header(keyName, params.getString(keyName));
+								request.header(keyName, headers.getString(keyName));
 								//request.header("Referer", "http://www.cdc.gov/mobile/Applications/sto/feedback/feedbackGeneric.html");
 							}
 						}
