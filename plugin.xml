@@ -9,7 +9,7 @@ id="org.github.bperin.http"
     <description>Cordova Android Native HTTP Request</description>
     <license>MIT</license>
     <keywords>cordova,net,http,https</keywords>
-    <repo>https://github.com/dmihalcik/HttpRequest</repo>
+    <repo>https://github.com/jhendess/HttpRequest</repo>
 
     <js-module src="www/httpRequest.js" name="HttpRequest">
         <clobbers target="HttpRequest" />

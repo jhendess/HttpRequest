@@ -1,43 +1,73 @@
-# HTTP request plugin for Phonegap / Cordova
+# HTTP request plugin for Phonegap / Cordova      
 
 This plugin allows you to send native HTTP requests. Great for web APIs. This plugin can force HTTPS requests.
 
+In addition, this plugin will provide an alternative implementation of the XMLHttpRequest object (XHR). You could use this alternative implementation e.g. for sending cookies via the standard XHR API.
+
+Note: The NativeXMLHttpRequest is currently under development and not yet committed.
+
+The code is based on the HTTP-Request library [http-request](https://github.com/kevinsawicki/http-request) and forked from [dmihalcik/HttpRequest](https://github.com/dmihalcik/HttpRequest) who extended [bperin/HttpRequest](https://github.com/bperin/HttpRequest) to work as a Phonegap 3.x plugin. Thanks guys!
+
+
 ## Adding the Plugin to your project
 
-Using this plugin requires [Android Cordova](http://cordova.apache.org) or PhoneGap.
+Using this plugin requires [Android Cordova](http://cordova.apache.org) or PhoneGap. 
 
-Based off of HTTP-Request library [http-request](https://github.com/kevinsawicki/http-request) and directly from [bperin/HttpRequest](https://github.com/bperin/HttpRequest).
+You can add it to your existing project by calling via commandline:
+
+```
+    $ cordova plugin add https://github.com/jhendess/HttpRequest.git 
+```
 
 
 ## Using the plugin
 
-Plugin supports GET and POST methods
+The API for the plugin is quite simple:
 
-There are two main options to set, trustAll which makes the request trust all SSL certs and Gzip to accept gzip requests.
+```javascript
+ HttpRequest.execute(url, method, params, options, success, fail)
+```
 
-If the response request code == 200 the win callback function is triggered otherwise it will fail.
+The plugin supports only GET and POST methods at the moment (everything else than POST will be interpreted as GET).
+
+The properties of the param objects will either be used as the GET parameters or as a POST form.  
+
+In addition you can set additional obtions:
+
+ * `trustAll` makes the request trust all SSL certs
+  
+ * `Gzip` to accept gzip requests.
+ 
+ * `headers` can be an object whose properties will be added to the request headers
+ 
+ * `payload` allows you to define a custom request body of the request as a string (can e.g. be used for POST)   
 
 
-### Example
-Query facebook for posts with 'phonegap'
+If the response request code is 200 the success callback function is triggered otherwise the fail callback gets triggered.
 
-```java
-var httpOptions = {
+### Examples
+Query a REST service via GET:
+
+```javascript
+    var httpOptions = {
         trustAll: true
     };
+
+    var apiUrl = 'https://locahost/myRestService/12345?';
+    
+    // Note: Use of this object will result in calling https://locahost/myRestService/12345?q=phonegap&foo=bar
     var params = {
         q: 'phonegap',
-        type: 'post'// note this is a GET request post refers to the facebook wall posts
+        foo 'bar'
     };
 
-    var apiUrl = 'https://graph.facebook.com/search?';
-
-    window.plugins.HttpRequest.execute(apiUrl,'get',params, httpOptions,
+    HttpRequest.execute(apiUrl, 'get', params, httpOptions,
             function(response) {
 
                 var code = response.code;
                 var message = response.message;
                 var body = response.body;
+                var responseHeaders = response.headers;
                 
                 alert(JSON.stringify(body));
                 
@@ -48,13 +78,52 @@ var httpOptions = {
                 var code = response.code;
                 var message = response.message;
                 var body = response.body;
+                var responseHeaders = response.headers;
 
                 alert('Request : ' + message + ' code ' + code);
-            });
-        
+            });                   
 ```
 
+Consume a SOAP service via POST:
+
+```javascript
+    var httpOptions = {
+        trustAll: true,
+        headers : {
+            "Cookie" : "someCookie:someValue"
+        },
+        payload : "<Envelope>.....</Envelope>"
+    };    
+    
+    var apiUrl = 'https://locahost/myRestService/12345';
+
+    HttpRequest.execute(apiUrl, 'post', {}, httpOptions,
+            function(response) {
+                // Do something with the successful response ...
+                
+                return;
+            },
+            function(response) {
+                // Do something with the failed response ...
+                
+                return;
+            }); 
+
+```
+
+
 ## RELEASE NOTES ##
+
+### Dec 2, 2014 ###
+
+* Forked from [dmihalcik/HttpRequest](https://github.com/dmihalcik/HttpRequest) 
+* Added support for getting response headers
+* Added support for setting a payload string as request body
+* Updated readme
+
+### Mar 28, 2013 ###
+
+* Added support for request headers
 
 ### Feb 12, 2013 ###
 
